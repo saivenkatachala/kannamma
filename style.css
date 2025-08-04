@@ -1,0 +1,128 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    scroll-behavior: smooth;
+    background-color: #fffef2;
+  }
+  
+  h1, h2, h3 {
+    font-family: 'Pacifico', cursive;
+    color: #d97706;
+  }
+  
+  .banner {
+    background: url('ripe_mangoes.jpg') no-repeat center/cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .banner .overlay {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+  }
+  
+  .about {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 60px 20px;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .about img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 12px;
+  }
+  
+  .about .text {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  .products {
+    padding: 60px 20px;
+    text-align: center;
+    background-color: #fefce8;
+  }
+  
+  .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 30px;
+  }
+  
+  .product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 200px;
+    padding: 20px;
+  }
+  
+  .product-card img {
+    width: 100%;
+    border-radius: 10px;
+  }
+  
+  .order {
+    padding: 60px 20px;
+    background-color: #ecfccb;
+    text-align: center;
+  }
+  
+  form {
+    max-width: 500px;
+    margin: auto;
+    display: grid;
+    gap: 15px;
+  }
+  
+  input, select, textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
+  button {
+    background-color: #facc15;
+    color: #000;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #fbbf24;
+  }
+  
+  .contact {
+    padding: 60px 20px;
+    text-align: center;
+  }
+  
+  footer {
+    background: #fef08a;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .about {
+      flex-direction: column;
+    }
+  }
+
+  
