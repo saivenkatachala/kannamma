@@ -7,7 +7,6 @@
     <title>Kannamma Mango Farms - Fresh Mangoes from Farm to Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Bootstrap CSS for responsive grid -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
@@ -16,7 +15,6 @@
             --light: #FFF9E6;
             --dark: #2E7D32;
             --text: #333333;
-            --cart-bg: #f8f9fa;
         }
         
         * {
@@ -71,9 +69,8 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
         
-        /* Header & Banner */
+        /* Header Slider */
         header {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('main.jpg') no-repeat center center/cover;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -82,10 +79,117 @@
             text-align: center;
             color: white;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .slider-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .slider-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        
+        .slider-item.active {
+            opacity: 1;
+        }
+        
+        .slider-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .slider-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .slider-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+        }
+        
+        .slider-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-dot.active {
+            background: var(--primary);
+            transform: scale(1.2);
+            border-color: var(--primary);
+        }
+        
+        .slider-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .slider-arrow:hover {
+            background: rgba(0, 0, 0, 0.6);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .slider-arrow.prev {
+            left: 20px;
+        }
+        
+        .slider-arrow.next {
+            right: 20px;
         }
         
         .banner-content {
             animation: fadeIn 1.5s ease-in-out;
+            z-index: 5;
+            max-width: 800px;
+            padding: 0 20px;
         }
         
         @keyframes fadeIn {
@@ -97,19 +201,19 @@
             font-size: 3.5rem;
             margin-bottom: 20px;
             color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
         }
         h4 {
             font-size: 1.5rem;
             margin-bottom: 20px;
-            color:#e5e5e5;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            color:#ffffff;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
         }
         
         .banner-content p {
             font-size: 1.5rem;
             margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.7);
         }
         
         .btn {
@@ -124,20 +228,14 @@
             text-decoration: none;
             transition: all 0.3s ease;
             cursor: pointer;
+            z-index: 10;
+            position: relative;
         }
         
         .btn:hover {
             background: var(--dark);
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .btn-secondary {
-            background: var(--secondary);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--dark);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
         .btn-cart {
@@ -149,12 +247,13 @@
         
         .scroll-down {
             position: absolute;
-            bottom: 30px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             color: white;
             font-size: 2rem;
             animation: bounce 2s infinite;
+            z-index: 10;
         }
         
         @keyframes bounce {
@@ -433,29 +532,7 @@
             color: #666;
         }
         
-        .whatsapp-order-btn {
-            background: #25D366;
-            color: white;
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: background 0.3s ease;
-            margin-top: 20px;
-        }
-        
-        .whatsapp-order-btn:hover {
-            background: #128C7E;
-        }
-        
-        /* Order Form in Cart */
+        /* Order Form */
         .order-form-small {
             padding: 10px 0;
         }
@@ -473,7 +550,8 @@
         }
         
         .order-form-small input,
-        .order-form-small textarea {
+        .order-form-small textarea,
+        .order-form-small select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -482,7 +560,8 @@
         }
         
         .order-form-small input:focus,
-        .order-form-small textarea:focus {
+        .order-form-small textarea:focus,
+        .order-form-small select:focus {
             border-color: var(--primary);
             outline: none;
         }
@@ -620,7 +699,29 @@
             margin-bottom: 15px;
         }
         
-        /* Cart Added Message - SIMPLIFIED VERSION */
+        /* Quantity Selector */
+        .quantity-selector {
+            margin-bottom: 15px;
+        }
+        
+        .quantity-selector label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        .quantity-selector select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            background: white;
+        }
+        
+        /* Cart Added Message */
         .cart-added-message {
             position: absolute;
             top: 10px;
@@ -641,76 +742,6 @@
         
         .cart-added-message.show {
             opacity: 1;
-        }
-        
-        /* Order Section */
-        .order {
-            background-color: var(--light);
-        }
-        
-        .order-form {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border 0.3s ease;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-        
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .form-row .form-group {
-            flex: 1;
-        }
-        
-        .submit-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 20px;
-        }
-        
-        .submit-btn:hover {
-            background: var(--dark);
         }
         
         /* Contact Section */
@@ -815,44 +846,57 @@
             height: auto;
         }
         
-        /* Responsive Styles */
+        /* Status Messages */
+        .status-message {
+            padding: 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
         @media (max-width: 992px) {
-            h1 {
-                font-size: 2.8rem;
-            }
-            
-            .about-content {
-                flex-direction: column;
-            }
-            
-            .about-text, .about-image {
-                flex: none;
-                width: 100%;
-            }
-            
-            .form-row, .form-row-small {
-                flex-direction: column;
-                gap: 0;
-            }
-            
-            .cart-content {
-                width: 100%;
-                max-width: 100%;
-            }
-            
-            .back-to-top {
-                bottom: 70px;
-                right: 20px;
-                width: 45px;
-                height: 45px;
-            }
+            h1 { font-size: 2.8rem; }
+            .about-content { flex-direction: column; }
+            .about-text, .about-image { flex: none; width: 100%; }
+            .form-row, .form-row-small { flex-direction: column; gap: 0; }
+            .cart-content { width: 100%; max-width: 100%; }
+            .back-to-top { bottom: 70px; right: 20px; width: 45px; height: 45px; }
+            .slider-arrow { width: 40px; height: 40px; font-size: 1.2rem; }
         }
         
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-            
+            .mobile-menu-btn { display: block; }
             .nav-links {
                 position: fixed;
                 top: 70px;
@@ -865,69 +909,33 @@
                 padding: 40px 0;
                 transition: left 0.3s ease;
             }
-            
-            .nav-links.active {
-                left: 0;
+            .nav-links.active { left: 0; }
+            .nav-links li { margin: 15px 0; }
+            h1 { font-size: 2.5rem; }
+            h4 { font-size: 1.3rem; }
+            .banner-content p { font-size: 1.2rem; }
+            .slider-arrow {
+                width: 35px; height: 35px; font-size: 1rem;
+                bottom: 20px; top: auto; transform: none;
             }
-            
-            .nav-links li {
-                margin: 15px 0;
-            }
-            
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .order-form {
-                padding: 30px 20px;
-            }
+            .slider-arrow.prev { left: 10px; }
+            .slider-arrow.next { right: 10px; }
+            .slider-controls { bottom: 80px; }
         }
         
         @media (max-width: 576px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .banner-content p {
-                font-size: 1.2rem;
-            }
-            
-            section {
-                padding: 60px 0;
-            }
-            
-            .order-form {
-                padding: 30px 20px;
-            }
-            
-            .cart-tabs {
-                flex-direction: column;
-            }
-            
-            .cart-tab {
-                padding: 10px;
-            }
-            
-            .back-to-top {
-                bottom: 60px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-                font-size: 1.3rem;
-            }
-            
-            .hit-counter img {
-                max-width: 80px;
-            }
-            
-            footer {
-                padding: 15px 0;
-            }
-            
-            .social-links a {
-                font-size: 1.1rem;
-                margin: 0 6px;
-            }
+            h1 { font-size: 2rem; }
+            h4 { font-size: 1.1rem; }
+            .banner-content p { font-size: 1rem; }
+            section { padding: 60px 0; }
+            .cart-tabs { flex-direction: column; }
+            .cart-tab { padding: 10px; }
+            .back-to-top { bottom: 60px; right: 15px; width: 40px; height: 40px; font-size: 1.3rem; }
+            .hit-counter img { max-width: 80px; }
+            footer { padding: 15px 0; }
+            .social-links a { font-size: 1.1rem; margin: 0 6px; }
+            .slider-controls { bottom: 90px; }
+            .scroll-down { bottom: 120px; }
         }
     </style>
 </head>
@@ -958,7 +966,7 @@
         </div>
     </nav>
     
-    <!-- Cart Modal with Order Form -->
+    <!-- Cart Modal -->
     <div class="cart-modal" id="cartModal">
         <div class="cart-content">
             <div class="cart-header">
@@ -976,7 +984,6 @@
             <!-- Cart Items Section -->
             <div class="cart-section active" id="cartSection">
                 <div class="cart-items" id="cartItems">
-                    <!-- Cart items will be dynamically added here -->
                     <div class="cart-empty" id="cartEmpty">
                         <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; color: #ccc;"></i>
                         <p>Your cart is empty</p>
@@ -1004,13 +1011,18 @@
                 <div style="padding: 20px;">
                     <h3 style="margin-bottom: 20px; color: var(--dark);">Order Details</h3>
                     <p style="color: #e53935; font-weight: 600; margin-bottom: 20px;">
-                        Please fill all details correctly for delivery
+                        Please fill all details correctly for delivery and email confirmation
                     </p>
                     
                     <form id="cartOrderForm" class="order-form-small">
                         <div class="form-group">
                             <label for="cartName">Full Name *</label>
                             <input type="text" id="cartName" name="cartName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartEmail">Email Address *</label>
+                            <input type="email" id="cartEmail" name="cartEmail" required>
                         </div>
                         
                         <div class="form-group">
@@ -1060,8 +1072,11 @@
                             <span class="amount">₹<span id="cartOrderAmount">0</span></span>
                         </div>
                         
-                        <button type="submit" class="whatsapp-order-btn" id="cartWhatsappOrderBtn" style="display: none;">
-                            <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
+                        <!-- Order Status Message -->
+                        <div id="orderStatusMessage" class="status-message"></div>
+                        
+                        <button type="submit" class="btn submit-btn" id="cartOrderSubmitBtn" style="width: 100%;">
+                            <i class="fas fa-paper-plane"></i> Submit Order
                         </button>
                         
                         <p style="margin-top: 15px; font-size: 0.8rem; color: #666; text-align: center;">
@@ -1073,13 +1088,77 @@
         </div>
     </div>
     
-    <!-- Banner -->
+    <!-- Header with Background Slider -->
     <header>
-        <div class="banner-content">
+        <!-- Slider Container -->
+        <div class="slider-container" id="sliderContainer">
+            <!-- Slide 1 - Video -->
+            <div class="slider-item active" data-type="video">
+                <video class="slider-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="Kannamma.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <!-- Fallback image if video doesn't load -->
+                <img src="main.jpg" alt="Mango Farm" class="slider-image" style="display: none;">
+            </div>
+            
+            <!-- Slide 2 - Image -->
+            <!-- <div class="slider-item" data-type="image">
+                <img src="main.jpg" alt="Fresh Mangoes" class="slider-image">
+            </div> -->
+            
+            <!-- Slide 3 - Image -->
+            <!-- <div class="slider-item" data-type="image">
+                <img src="https://images.unsplash.com/photo-1592921870789-04563d55041c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Mango Harvest" class="slider-image">
+            </div> -->
+            
+            <!-- Slide 4 - Video -->
+            <div class="slider-item" data-type="video">
+                <video class="slider-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="v4.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video> 
+                <!-- Fallback image if video doesn't load -->
+                <img src="main.jpg" alt="Mango Slices" class="slider-image" style="display: none;">
+            </div>
+            
+            <!-- Slide 5 - Image -->
+            <!-- <div class="slider-item" data-type="image">
+                <img src="https://images.unsplash.com/photo-1628992682633-bf2d40cb595f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80" alt="Mango Orchard" class="slider-image">
+            </div> -->
+        </div>
+        
+        <!-- Slider Controls -->
+        <button class="slider-arrow prev" id="prevSlide">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="slider-arrow next" id="nextSlide">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <!-- Slider Dots -->
+        <div class="slider-controls">
+            <div class="slider-dot active" data-index="0"></div>
+            <div class="slider-dot" data-index="1"></div>
+            <div class="slider-dot" data-index="2"></div>
+            <!-- <div class="slider-dot" data-index="3"></div>
+            <div class="slider-dot" data-index="4"></div> -->
+        </div>
+        
+        <!-- Autoplay Control -->
+        <button class="autoplay-control" id="autoplayControl" title="Pause/Resume Slideshow">
+            <i class="fas fa-pause"></i>
+        </button>
+        
+        <!-- Banner Content -->
+        <!-- <div class="banner-content">
             <h1>Fresh Mangoes</h1>
             <h4>From Farm to Home</h4>
+            <p>Experience the taste of nature's finest mangoes, grown with love and care</p>
             <a href="#products" class="btn">Shop Now</a>
-        </div>
+        </div> -->
+        
+        <!-- Scroll Down Indicator -->
         <a href="#about" class="scroll-down">
             <i class="fas fa-chevron-down"></i>
         </a>
@@ -1107,6 +1186,7 @@
         <div class="container">
             <h2 class="section-title">Our Mango Varieties</h2>
             <div class="products-grid">
+                <!-- Product 1 -->
                 <div class="product-card">
                     <div class="cart-added-message" id="message-1">✓ Added to cart!</div>
                     <div class="product-image">
@@ -1116,12 +1196,29 @@
                         <h3>Banganapalle</h3>
                         <p>The king of mangoes with rich, creamy texture and sweet, saffron-flavored pulp.</p>
                         <div class="price">₹200 per KG</div>
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity-1">Select Quantity (KG):</label>
+                            <select id="quantity-1" class="quantity-select">
+                                <option value="1">1 KG</option>
+                                <option value="2">2 KG</option>
+                                <option value="3">3 KG</option>
+                                <option value="4">4 KG</option>
+                                <option value="5">5 KG</option>
+                                <option value="10">10 KG</option>
+                                <option value="15">15 KG</option>
+                                <option value="20">20 KG</option>
+                                <option value="25">25 KG</option>
+                            </select>
+                        </div>
+                        
                         <button class="btn btn-cart add-to-cart" data-id="1" data-name="Banganapalle" data-price="200">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
                 </div>
                 
+                <!-- Product 2 -->
                 <div class="product-card">
                     <div class="cart-added-message" id="message-2">✓ Added to cart!</div>
                     <div class="product-image">
@@ -1131,12 +1228,29 @@
                         <h3>Kadhar</h3>
                         <p>Gujarat's pride with distinct aroma, vibrant color and sweet-sour balance.</p>
                         <div class="price">₹200 per KG</div>
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity-2">Select Quantity (KG):</label>
+                            <select id="quantity-2" class="quantity-select">
+                                <option value="1">1 KG</option>
+                                <option value="2">2 KG</option>
+                                <option value="3">3 KG</option>
+                                <option value="4">4 KG</option>
+                                <option value="5">5 KG</option>
+                                <option value="10">10 KG</option>
+                                <option value="15">15 KG</option>
+                                <option value="20">20 KG</option>
+                                <option value="25">25 KG</option>
+                            </select>
+                        </div>
+                        
                         <button class="btn btn-cart add-to-cart" data-id="2" data-name="Kadhar" data-price="200">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
                 </div>
                 
+                <!-- Product 3 -->
                 <div class="product-card">
                     <div class="cart-added-message" id="message-3">✓ Added to cart!</div>
                     <div class="product-image">
@@ -1146,12 +1260,29 @@
                         <h3>Pullura</h3>
                         <p>Unique beak shape with firm flesh, perfect for salads and chutneys.</p>
                         <div class="price">₹200 per KG</div>
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity-3">Select Quantity (KG):</label>
+                            <select id="quantity-3" class="quantity-select">
+                                <option value="1">1 KG</option>
+                                <option value="2">2 KG</option>
+                                <option value="3">3 KG</option>
+                                <option value="4">4 KG</option>
+                                <option value="5">5 KG</option>
+                                <option value="10">10 KG</option>
+                                <option value="15">15 KG</option>
+                                <option value="20">20 KG</option>
+                                <option value="25">25 KG</option>
+                            </select>
+                        </div>
+                        
                         <button class="btn btn-cart add-to-cart" data-id="3" data-name="Pullura" data-price="200">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
                 </div>
                 
+                <!-- Product 4 -->
                 <div class="product-card">
                     <div class="cart-added-message" id="message-4">✓ Added to cart!</div>
                     <div class="product-image">
@@ -1161,12 +1292,29 @@
                         <h3>Neelam</h3>
                         <p>Andhra's specialty with fiberless, sweet pulp and thin skin.</p>
                         <div class="price">₹200 per KG</div>
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity-4">Select Quantity (KG):</label>
+                            <select id="quantity-4" class="quantity-select">
+                                <option value="1">1 KG</option>
+                                <option value="2">2 KG</option>
+                                <option value="3">3 KG</option>
+                                <option value="4">4 KG</option>
+                                <option value="5">5 KG</option>
+                                <option value="10">10 KG</option>
+                                <option value="15">15 KG</option>
+                                <option value="20">20 KG</option>
+                                <option value="25">25 KG</option>
+                            </select>
+                        </div>
+                        
                         <button class="btn btn-cart add-to-cart" data-id="4" data-name="Neelam" data-price="200">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
                 </div>
                 
+                <!-- Product 5 -->
                 <div class="product-card">
                     <div class="cart-added-message" id="message-5">✓ Added to cart!</div>
                     <div class="product-image">
@@ -1176,12 +1324,29 @@
                         <h3>Mallika</h3>
                         <p>Famous for its aromatic flavor and juicy, sweet pulp with minimal fiber.</p>
                         <div class="price">₹200 per KG</div>
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity-5">Select Quantity (KG):</label>
+                            <select id="quantity-5" class="quantity-select">
+                                <option value="1">1 KG</option>
+                                <option value="2">2 KG</option>
+                                <option value="3">3 KG</option>
+                                <option value="4">4 KG</option>
+                                <option value="5">5 KG</option>
+                                <option value="10">10 KG</option>
+                                <option value="15">15 KG</option>
+                                <option value="20">20 KG</option>
+                                <option value="25">25 KG</option>
+                            </select>
+                        </div>
+                        
                         <button class="btn btn-cart add-to-cart" data-id="5" data-name="Mallika" data-price="200">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
                     </div>
                 </div>
                 
+                <!-- Product 6 -->
                 <div class="product-card">
                     <div class="cart-added-message" id="message-6">✓ Added to cart!</div>
                     <div class="product-image">
@@ -1191,6 +1356,22 @@
                         <h3>Totapuri</h3>
                         <p>Late-season variety with excellent shelf life and balanced sweetness.</p>
                         <div class="price">₹150 per KG</div>
+                        
+                        <div class="quantity-selector">
+                            <label for="quantity-6">Select Quantity (KG):</label>
+                            <select id="quantity-6" class="quantity-select">
+                                <option value="1">1 KG</option>
+                                <option value="2">2 KG</option>
+                                <option value="3">3 KG</option>
+                                <option value="4">4 KG</option>
+                                <option value="5">5 KG</option>
+                                <option value="10">10 KG</option>
+                                <option value="15">15 KG</option>
+                                <option value="20">20 KG</option>
+                                <option value="25">25 KG</option>
+                            </select>
+                        </div>
+                        
                         <button class="btn btn-cart add-to-cart" data-id="6" data-name="Totapuri" data-price="150">
                             <i class="fas fa-cart-plus"></i> Add to Cart
                         </button>
@@ -1262,32 +1443,22 @@
             </div>
         </div>
     </footer>
-    <!-- <script>
-        // SIMPLIFIED CART SYSTEM WITH INSTANT UPDATES
+    
+    <script>
+        // ==================== CONFIGURATION ====================
+        // REPLACE THIS URL WITH YOUR GOOGLE APPS SCRIPT DEPLOYMENT URL
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzM_WAQH3N4lgb9kE1ywq72n2uO0oOL99Ch6a4u7CNpWVdAwSp_iZiRGHWxrpFlZAWp/exec';
+        
+        // ==================== CART SYSTEM ====================
         let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const ownerWhatsappNumber = "9989634265";
         
-        // Initialize cart on page load
-        document.addEventListener('DOMContentLoaded', initCart);
-        
-        function initCart() {
-            updateCartCount();
-            setupEventListeners();
-            
-            // Initialize cart display if modal is already open (for page refresh)
-            if (document.getElementById('cartModal').classList.contains('active')) {
-                updateCartDisplay();
-                updateOrderSection();
-            }
-        }
-        
-        // Update cart count in header
+        // Update cart count
         function updateCartCount() {
             const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             document.getElementById("cartCount").textContent = cartCount;
         }
         
-        // Update cart display in modal
+        // Update cart display
         function updateCartDisplay() {
             const cartItems = document.getElementById("cartItems");
             const cartTotal = document.getElementById("cartTotal");
@@ -1295,18 +1466,14 @@
             const totalAmount = document.getElementById("totalAmount");
             const goToOrderBtn = document.getElementById("goToOrderTab");
             
+            // Clear existing items
+            const existingItems = cartItems.querySelectorAll('.cart-item');
+            existingItems.forEach(item => item.remove());
+            
             if (cart.length === 0) {
                 cartEmpty.style.display = "block";
                 cartTotal.style.display = "none";
                 goToOrderBtn.style.display = "none";
-                
-                // Clear cart items
-                const existingItems = cartItems.querySelectorAll('.cart-item');
-                existingItems.forEach(item => item.remove());
-                
-                // Make sure empty message is visible
-                cartItems.innerHTML = '';
-                cartItems.appendChild(cartEmpty);
                 return;
             }
             
@@ -1314,72 +1481,81 @@
             cartTotal.style.display = "flex";
             goToOrderBtn.style.display = "inline-block";
             
-            let html = "";
             let total = 0;
             
             cart.forEach((item, index) => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
                 
-                html += `
-                    <div class="cart-item">
-                        <div class="cart-item-info">
-                            <h4>${item.name}</h4>
-                            <div class="cart-item-price">₹${item.price}/kg</div>
-                        </div>
-                        <div class="cart-item-quantity">
-                            <button class="quantity-btn" data-index="${index}" data-change="-1">-</button>
-                            <span class="quantity-display">${item.quantity}</span>
-                            <button class="quantity-btn" data-index="${index}" data-change="1">+</button>
-                        </div>
-                        <div class="cart-item-total">
-                            ₹${itemTotal}
-                        </div>
-                        <button class="remove-item" data-index="${index}">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <div class="cart-item-price">₹${item.price}/kg × ${item.quantity}kg</div>
                     </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn" data-index="${index}" data-change="-1">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" data-index="${index}" data-change="1">+</button>
+                    </div>
+                    <div class="cart-item-total">
+                        ₹${itemTotal}
+                    </div>
+                    <button class="remove-item" data-index="${index}">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 `;
+                
+                cartItems.appendChild(cartItem);
             });
             
-            cartItems.innerHTML = html;
             totalAmount.textContent = total;
             
-            // Re-bind event listeners for cart items
-            bindCartItemListeners();
+            // Add event listeners
+            setTimeout(() => {
+                document.querySelectorAll(".quantity-btn").forEach(btn => {
+                    btn.addEventListener("click", function(e) {
+                        e.stopPropagation();
+                        const index = parseInt(this.dataset.index);
+                        const change = parseInt(this.dataset.change);
+                        adjustQuantity(index, change);
+                    });
+                });
+                
+                document.querySelectorAll(".remove-item").forEach(btn => {
+                    btn.addEventListener("click", function(e) {
+                        e.stopPropagation();
+                        const index = parseInt(this.dataset.index);
+                        removeItem(index);
+                    });
+                });
+            }, 10);
         }
         
         // Update order section
         function updateOrderSection() {
             const cartOrderTotal = document.getElementById("cartOrderTotal");
-            const cartWhatsappOrderBtn = document.getElementById("cartWhatsappOrderBtn");
             const cartOrderAmount = document.getElementById("cartOrderAmount");
             
             if (cart.length > 0) {
                 let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 cartOrderAmount.textContent = total;
                 cartOrderTotal.style.display = "flex";
-                cartWhatsappOrderBtn.style.display = "block";
             } else {
                 cartOrderTotal.style.display = "none";
-                cartWhatsappOrderBtn.style.display = "none";
             }
         }
         
-        // Update all UI elements
+        // Update all UI
         function updateUI() {
             updateCartCount();
             updateCartDisplay();
             updateOrderSection();
-            saveCartToStorage();
-        }
-        
-        // Save cart to localStorage
-        function saveCartToStorage() {
             localStorage.setItem("cart", JSON.stringify(cart));
         }
         
-        // Adjust quantity function
+        // Adjust quantity
         function adjustQuantity(index, change) {
             cart[index].quantity += change;
             if (cart[index].quantity <= 0) {
@@ -1388,13 +1564,13 @@
             updateUI();
         }
         
-        // Remove item function
+        // Remove item
         function removeItem(index) {
             cart.splice(index, 1);
             updateUI();
         }
         
-        // Show success message on add to cart
+        // Show success message
         function showMessage(button) {
             const productCard = button.closest(".product-card");
             const message = productCard.querySelector(".cart-added-message");
@@ -1404,7 +1580,6 @@
                 message.classList.remove("show");
             }, 1500);
             
-            // Update button temporarily
             const originalText = button.innerHTML;
             button.innerHTML = '<i class="fas fa-check"></i> Added!';
             button.style.background = 'var(--secondary)';
@@ -1415,30 +1590,278 @@
             }, 1500);
         }
         
-        // Bind event listeners for cart items (quantity buttons and remove buttons)
-        function bindCartItemListeners() {
-            // Quantity buttons
-            document.querySelectorAll(".quantity-btn").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const index = parseInt(this.dataset.index);
-                    const change = parseInt(this.dataset.change);
-                    adjustQuantity(index, change);
+        // ==================== GOOGLE SHEETS SUBMISSION ====================
+        async function submitOrderToGoogleSheets(orderData) {
+            try {
+                // Create URL with parameters
+                let url = GOOGLE_APPS_SCRIPT_URL + '?';
+                url += 'action=submitOrder&';
+                url += 'timestamp=' + encodeURIComponent(new Date().toISOString()) + '&';
+                url += 'customerName=' + encodeURIComponent(orderData.customer.name) + '&';
+                url += 'customerEmail=' + encodeURIComponent(orderData.customer.email) + '&';
+                url += 'customerPhone=' + encodeURIComponent(orderData.customer.phone) + '&';
+                url += 'customerVillage=' + encodeURIComponent(orderData.customer.address.village) + '&';
+                url += 'customerStreet=' + encodeURIComponent(orderData.customer.address.street) + '&';
+                url += 'customerLandmark=' + encodeURIComponent(orderData.customer.address.landmark || '') + '&';
+                url += 'customerDistrict=' + encodeURIComponent(orderData.customer.address.district) + '&';
+                url += 'customerState=' + encodeURIComponent(orderData.customer.address.state) + '&';
+                url += 'customerPincode=' + encodeURIComponent(orderData.customer.address.pincode) + '&';
+                url += 'customerInstructions=' + encodeURIComponent(orderData.customer.instructions || '') + '&';
+                url += 'orderItems=' + encodeURIComponent(JSON.stringify(orderData.items)) + '&';
+                url += 'orderTotal=' + encodeURIComponent(orderData.orderTotal) + '&';
+                url += 'orderDate=' + encodeURIComponent(orderData.orderDate);
+                
+                console.log('Submitting to:', url);
+                
+                // Use fetch with no-cors for cross-origin
+                const response = await fetch(url, {
+                    method: 'GET',
+                    mode: 'no-cors'
                 });
-            });
-            
-            // Remove buttons
-            document.querySelectorAll(".remove-item").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const index = parseInt(this.dataset.index);
-                    removeItem(index);
-                });
-            });
+                
+                return { 
+                    success: true, 
+                    message: "Order submitted successfully! Check your email for confirmation." 
+                };
+                
+            } catch (error) {
+                console.error('Error:', error);
+                return { 
+                    success: false, 
+                    message: "Failed to submit order. Please try again or contact us directly." 
+                };
+            }
         }
         
-        // Setup all event listeners
-        function setupEventListeners() {
+        // ==================== ORDER FORM SUBMISSION ====================
+        document.getElementById("cartOrderForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+            
+            if (cart.length === 0) {
+                showOrderStatus("Your cart is empty. Please add mangoes first.", false);
+                return;
+            }
+            
+            // Get form values
+            const name = document.getElementById("cartName").value.trim();
+            const email = document.getElementById("cartEmail").value.trim();
+            const phone = document.getElementById("cartPhone").value.trim();
+            const village = document.getElementById("cartVillage").value.trim();
+            const street = document.getElementById("cartStreet").value.trim();
+            const district = document.getElementById("cartDistrict").value.trim();
+            const state = document.getElementById("cartState").value.trim();
+            const pincode = document.getElementById("cartPincode").value.trim();
+            const landmark = document.getElementById("cartLandmark").value.trim();
+            const instructions = document.getElementById("cartInstructions").value.trim();
+            
+            // Validate
+            if (!name || !email || !phone || !village || !street || !district || !state || !pincode) {
+                showOrderStatus("Please fill in all required fields marked with *", false);
+                return;
+            }
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showOrderStatus("Please enter a valid email address", false);
+                return;
+            }
+            
+            if (!/^[0-9]{10}$/.test(phone)) {
+                showOrderStatus("Please enter a valid 10-digit phone number", false);
+                return;
+            }
+            
+            if (!/^[0-9]{6}$/.test(pincode)) {
+                showOrderStatus("Please enter a valid 6-digit pincode", false);
+                return;
+            }
+            
+            // Prepare order data
+            const orderData = {
+                customer: {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    address: {
+                        village: village,
+                        street: street,
+                        landmark: landmark,
+                        district: district,
+                        state: state,
+                        pincode: pincode
+                    },
+                    instructions: instructions
+                },
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    total: item.price * item.quantity
+                })),
+                orderTotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                orderDate: new Date().toLocaleString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
+                    dateStyle: 'full',
+                    timeStyle: 'short'
+                })
+            };
+            
+            // Show loading
+            const submitBtn = document.getElementById("cartOrderSubmitBtn");
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="loading"></span> Processing...';
+            submitBtn.disabled = true;
+            
+            const statusElement = document.getElementById("orderStatusMessage");
+            statusElement.style.display = 'none';
+            
+            // Submit to Google Sheets
+            const result = await submitOrderToGoogleSheets(orderData);
+            
+            if (result.success) {
+                showOrderStatus(result.message, true);
+                
+                // Clear cart and reset after 3 seconds
+                setTimeout(() => {
+                    cart = [];
+                    updateUI();
+                    document.getElementById("cartModal").classList.remove("active");
+                    this.reset();
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }, 3000);
+            } else {
+                showOrderStatus(result.message, false);
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        function showOrderStatus(message, isSuccess) {
+            const statusElement = document.getElementById("orderStatusMessage");
+            statusElement.textContent = message;
+            statusElement.className = `status-message ${isSuccess ? 'status-success' : 'status-error'}`;
+            statusElement.style.display = 'block';
+        }
+        
+        // ==================== HEADER SLIDER ====================
+        class HeaderSlider {
+            constructor() {
+                this.slides = document.querySelectorAll('.slider-item');
+                this.dots = document.querySelectorAll('.slider-dot');
+                this.prevBtn = document.getElementById('prevSlide');
+                this.nextBtn = document.getElementById('nextSlide');
+                this.currentIndex = 0;
+                this.autoplay = true;
+                this.autoplayInterval = null;
+                this.slideDuration = 5000;
+                
+                this.init();
+            }
+            
+            init() {
+                this.startAutoplay();
+                
+                this.prevBtn.addEventListener('click', () => this.prevSlide());
+                this.nextBtn.addEventListener('click', () => this.nextSlide());
+                
+                this.dots.forEach(dot => {
+                    dot.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        this.goToSlide(index);
+                    });
+                });
+                
+                const sliderContainer = document.getElementById('sliderContainer');
+                sliderContainer.addEventListener('mouseenter', () => {
+                    if (this.autoplay) this.stopAutoplay();
+                });
+                
+                sliderContainer.addEventListener('mouseleave', () => {
+                    if (this.autoplay) this.startAutoplay();
+                });
+                
+                this.initializeVideos();
+            }
+            
+            initializeVideos() {
+                this.slides.forEach(slide => {
+                    if (slide.dataset.type === 'video') {
+                        const video = slide.querySelector('video');
+                        const fallbackImage = slide.querySelector('.slider-image');
+                        
+                        video.addEventListener('error', () => {
+                            video.style.display = 'none';
+                            fallbackImage.style.display = 'block';
+                        });
+                        
+                        video.addEventListener('loadeddata', () => {
+                            if (slide.classList.contains('active')) {
+                                video.play().catch(e => console.log('Video autoplay prevented:', e));
+                            }
+                        });
+                    }
+                });
+            }
+            
+            startAutoplay() {
+                if (this.autoplayInterval) clearInterval(this.autoplayInterval);
+                this.autoplayInterval = setInterval(() => {
+                    this.nextSlide();
+                }, this.slideDuration);
+            }
+            
+            stopAutoplay() {
+                if (this.autoplayInterval) {
+                    clearInterval(this.autoplayInterval);
+                    this.autoplayInterval = null;
+                }
+            }
+            
+            goToSlide(index) {
+                this.slides[this.currentIndex].classList.remove('active');
+                this.dots[this.currentIndex].classList.remove('active');
+                
+                if (this.slides[this.currentIndex].dataset.type === 'video') {
+                    const video = this.slides[this.currentIndex].querySelector('video');
+                    video.pause();
+                }
+                
+                this.currentIndex = index;
+                
+                this.slides[this.currentIndex].classList.add('active');
+                this.dots[this.currentIndex].classList.add('active');
+                
+                if (this.slides[this.currentIndex].dataset.type === 'video') {
+                    const video = this.slides[this.currentIndex].querySelector('video');
+                    video.currentTime = 0;
+                    video.play().catch(e => console.log('Video autoplay prevented:', e));
+                }
+                
+                if (this.autoplay) {
+                    this.stopAutoplay();
+                    this.startAutoplay();
+                }
+            }
+            
+            nextSlide() {
+                const nextIndex = (this.currentIndex + 1) % this.slides.length;
+                this.goToSlide(nextIndex);
+            }
+            
+            prevSlide() {
+                const prevIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
+                this.goToSlide(prevIndex);
+            }
+        }
+        
+        // ==================== INITIALIZE ====================
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize slider
+            const headerSlider = new HeaderSlider();
+            
+            // Initialize cart
+            updateUI();
+            
             // Add to cart button listeners
             document.querySelectorAll(".add-to-cart").forEach(btn => {
                 btn.addEventListener("click", function() {
@@ -1446,20 +1869,23 @@
                     const name = this.dataset.name;
                     const price = parseInt(this.dataset.price);
                     
+                    const productCard = this.closest('.product-card');
+                    const quantitySelect = productCard.querySelector('.quantity-select');
+                    const quantity = parseInt(quantitySelect.value) || 1;
+                    
                     const existingItem = cart.find(item => item.id === id);
                     
                     if (existingItem) {
-                        existingItem.quantity++;
+                        existingItem.quantity += quantity;
                     } else {
                         cart.push({
                             id: id,
                             name: name,
                             price: price,
-                            quantity: 1
+                            quantity: quantity
                         });
                     }
                     
-                    // Show success message
                     showMessage(this);
                     updateUI();
                 });
@@ -1472,7 +1898,6 @@
             
             cartIcon.addEventListener("click", () => {
                 cartModal.classList.add("active");
-                // Update cart display when modal opens
                 updateCartDisplay();
                 updateOrderSection();
             });
@@ -1520,527 +1945,55 @@
                 });
             });
             
-            // Order form submission
-            document.getElementById("cartOrderForm").addEventListener("submit", (e) => {
-                e.preventDefault();
-                
-                if (cart.length === 0) {
-                    alert("Your cart is empty. Please add mangoes from 'Our Products' section first.");
-                    
-                    // Switch to cart tab
-                    cartTabs.forEach(t => t.classList.remove("active"));
-                    cartTabs[0].classList.add("active");
-                    
-                    cartSections.forEach(section => {
-                        section.classList.remove("active");
-                        if (section.id === "cartSection") {
-                            section.classList.add("active");
-                        }
-                    });
-                    return;
-                }
-                
-                const name = document.getElementById("cartName").value.trim();
-                const phone = document.getElementById("cartPhone").value.trim();
-                const village = document.getElementById("cartVillage").value.trim();
-                const street = document.getElementById("cartStreet").value.trim();
-                const landmark = document.getElementById("cartLandmark").value.trim();
-                const district = document.getElementById("cartDistrict").value.trim();
-                const state = document.getElementById("cartState").value.trim();
-                const pincode = document.getElementById("cartPincode").value.trim();
-                const instructions = document.getElementById("cartInstructions").value.trim();
-                
-                // Validate required fields
-                if (!name || !phone || !village || !street || !district || !state || !pincode) {
-                    alert("Please fill in all required fields marked with *");
-                    return;
-                }
-                
-                // Validate phone number
-                if (!/^[0-9]{10}$/.test(phone)) {
-                    alert("Please enter a valid 10-digit phone number.");
-                    return;
-                }
-                
-                // Validate pincode
-                if (!/^[0-9]{6}$/.test(pincode)) {
-                    alert("Please enter a valid 6-digit pincode.");
-                    return;
-                }
-                
-                sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions);
-            });
-        }
-        
-        // Send order via WhatsApp
-        function sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions) {
-            let message = `*New Mango Order*\n\n`;
-            message += `*Customer Details:*\n`;
-            message += `Name: ${name}\n`;
-            message += `Phone: ${phone}\n`;
-            message += `\n*Delivery Address:*\n`;
-            message += `Village/Town: ${village}\n`;
-            message += `Street/Road: ${street}\n`;
-            if (landmark) message += `Landmark: ${landmark}\n`;
-            message += `District: ${district}\n`;
-            message += `State: ${state}\n`;
-            message += `Pincode: ${pincode}\n`;
-            if (instructions) message += `Instructions: ${instructions}\n`;
+            // Mobile menu
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
             
-            message += `\n*Order Details:*\n`;
-            
-            let total = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                message += `- ${item.name}: ${item.quantity}kg × ₹${item.price} = ₹${itemTotal}\n`;
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
+                    '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
             });
             
-            message += `\n*Total: ₹${total}*\n\n`;
-            message += `*Order placed via Kannamma Mango Farms website*`;
-            
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappURL = `https://wa.me/91${ownerWhatsappNumber}?text=${encodedMessage}`;
-            
-            window.open(whatsappURL, "_blank");
-            
-            // Clear cart after order
-            cart = [];
-            updateUI();
-            
-            // Reset form
-            document.getElementById("cartOrderForm").reset();
-            
-            // Close cart modal
-            document.getElementById("cartModal").classList.remove("active");
-            
-            // Show success message
-            setTimeout(() => {
-                alert("Order placed successfully! You have been redirected to WhatsApp.");
-            }, 500);
-        }
-        
-        // Mobile Menu Toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        const navLinks = document.querySelector('.nav-links');
-        
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
-                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-        });
-        
-        // Close mobile menu when clicking a link
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            });
-        });
-        
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-            
-            // Show/hide back to top button
-            const backToTopBtn = document.getElementById('backToTop');
-            if (window.scrollY > 300) {
-                backToTopBtn.style.display = 'flex';
-            } else {
-                backToTopBtn.style.display = 'none';
-            }
-        });
-        
-        // Back to top button
-        document.getElementById('backToTop').addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    </script> -->
-   
-    
-
-
-    <script>
-    // SIMPLIFIED CART SYSTEM WITH INSTANT UPDATES
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const ownerWhatsappNumber = "9989634265";
-    
-    // Update cart count in header
-    function updateCartCount() {
-        const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-        document.getElementById("cartCount").textContent = cartCount;
-    }
-    
-    // Update cart display in modal
-    function updateCartDisplay() {
-        const cartItems = document.getElementById("cartItems");
-        const cartTotal = document.getElementById("cartTotal");
-        const cartEmpty = document.getElementById("cartEmpty");
-        const totalAmount = document.getElementById("totalAmount");
-        const goToOrderBtn = document.getElementById("goToOrderTab");
-        
-        // Clear existing items
-        const existingItems = cartItems.querySelectorAll('.cart-item');
-        existingItems.forEach(item => item.remove());
-        
-        if (cart.length === 0) {
-            cartEmpty.style.display = "block";
-            cartTotal.style.display = "none";
-            goToOrderBtn.style.display = "none";
-            return;
-        }
-        
-        cartEmpty.style.display = "none";
-        cartTotal.style.display = "flex";
-        goToOrderBtn.style.display = "inline-block";
-        
-        let total = 0;
-        
-        cart.forEach((item, index) => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
-            
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
-            cartItem.innerHTML = `
-                <div class="cart-item-info">
-                    <h4>${item.name}</h4>
-                    <div class="cart-item-price">₹${item.price}/kg</div>
-                </div>
-                <div class="cart-item-quantity">
-                    <button class="quantity-btn" data-index="${index}" data-change="-1">-</button>
-                    <span>${item.quantity}</span>
-                    <button class="quantity-btn" data-index="${index}" data-change="1">+</button>
-                </div>
-                <div class="cart-item-total">
-                    ₹${itemTotal}
-                </div>
-                <button class="remove-item" data-index="${index}">
-                    <i class="fas fa-trash"></i>
-                </button>
-            `;
-            
-            cartItems.appendChild(cartItem);
-        });
-        
-        totalAmount.textContent = total;
-        
-        // Add event listeners to the newly created buttons
-        setTimeout(() => {
-            document.querySelectorAll(".quantity-btn").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const index = parseInt(this.dataset.index);
-                    const change = parseInt(this.dataset.change);
-                    adjustQuantity(index, change);
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
                 });
             });
             
-            document.querySelectorAll(".remove-item").forEach(btn => {
-                btn.addEventListener("click", function(e) {
-                    e.stopPropagation();
-                    const index = parseInt(this.dataset.index);
-                    removeItem(index);
-                });
-            });
-        }, 10);
-    }
-    
-    // Update order section
-    function updateOrderSection() {
-        const cartOrderTotal = document.getElementById("cartOrderTotal");
-        const cartWhatsappOrderBtn = document.getElementById("cartWhatsappOrderBtn");
-        const cartOrderAmount = document.getElementById("cartOrderAmount");
-        
-        if (cart.length > 0) {
-            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            cartOrderAmount.textContent = total;
-            cartOrderTotal.style.display = "flex";
-            cartWhatsappOrderBtn.style.display = "block";
-        } else {
-            cartOrderTotal.style.display = "none";
-            cartWhatsappOrderBtn.style.display = "none";
-        }
-    }
-    
-    // Update all UI elements
-    function updateUI() {
-        updateCartCount();
-        updateCartDisplay();
-        updateOrderSection();
-        localStorage.setItem("cart", JSON.stringify(cart));
-    }
-    
-    // Adjust quantity function
-    function adjustQuantity(index, change) {
-        cart[index].quantity += change;
-        if (cart[index].quantity <= 0) {
-            cart.splice(index, 1);
-        }
-        updateUI();
-    }
-    
-    // Remove item function
-    function removeItem(index) {
-        cart.splice(index, 1);
-        updateUI();
-    }
-    
-    // Show success message on add to cart
-    function showMessage(button) {
-        const productCard = button.closest(".product-card");
-        const message = productCard.querySelector(".cart-added-message");
-        message.classList.add("show");
-        
-        setTimeout(() => {
-            message.classList.remove("show");
-        }, 1500);
-        
-        // Update button temporarily
-        const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-check"></i> Added!';
-        button.style.background = 'var(--secondary)';
-        
-        setTimeout(() => {
-            button.innerHTML = originalText;
-            button.style.background = '';
-        }, 1500);
-    }
-    
-    // Initialize on page load
-    document.addEventListener("DOMContentLoaded", function() {
-        updateUI();
-        
-        // Add to cart button listeners
-        document.querySelectorAll(".add-to-cart").forEach(btn => {
-            btn.addEventListener("click", function() {
-                const id = parseInt(this.dataset.id);
-                const name = this.dataset.name;
-                const price = parseInt(this.dataset.price);
-                
-                const existingItem = cart.find(item => item.id === id);
-                
-                if (existingItem) {
-                    existingItem.quantity++;
+            // Navbar scroll effect
+            window.addEventListener('scroll', () => {
+                const navbar = document.getElementById('navbar');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
                 } else {
-                    cart.push({
-                        id: id,
-                        name: name,
-                        price: price,
-                        quantity: 1
-                    });
+                    navbar.classList.remove('scrolled');
                 }
                 
-                // Show success message
-                showMessage(this);
-                updateUI();
-            });
-        });
-        
-        // Cart modal setup
-        const cartIcon = document.getElementById("cartIcon");
-        const cartModal = document.getElementById("cartModal");
-        const closeCart = document.getElementById("closeCart");
-        
-        cartIcon.addEventListener("click", () => {
-            cartModal.classList.add("active");
-            // Update cart display when modal opens
-            updateCartDisplay();
-            updateOrderSection();
-        });
-        
-        closeCart.addEventListener("click", () => {
-            cartModal.classList.remove("active");
-        });
-        
-        cartModal.addEventListener("click", (e) => {
-            if (e.target === cartModal) {
-                cartModal.classList.remove("active");
-            }
-        });
-        
-        // Cart tabs
-        const cartTabs = document.querySelectorAll(".cart-tab");
-        const cartSections = document.querySelectorAll(".cart-section");
-        
-        cartTabs.forEach(tab => {
-            tab.addEventListener("click", () => {
-                const tabName = tab.dataset.tab;
-                
-                cartTabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-                
-                cartSections.forEach(section => {
-                    section.classList.remove("active");
-                    if (section.id === tabName + "Section") {
-                        section.classList.add("active");
-                    }
-                });
-            });
-        });
-        
-        // Proceed to order button
-        document.getElementById("goToOrderTab").addEventListener("click", () => {
-            cartTabs.forEach(t => t.classList.remove("active"));
-            cartTabs[1].classList.add("active");
-            
-            cartSections.forEach(section => {
-                section.classList.remove("active");
-                if (section.id === "orderSection") {
-                    section.classList.add("active");
+                const backToTopBtn = document.getElementById('backToTop');
+                if (window.scrollY > 300) {
+                    backToTopBtn.style.display = 'flex';
+                } else {
+                    backToTopBtn.style.display = 'none';
                 }
             });
-        });
-        
-        // Order form submission
-        document.getElementById("cartOrderForm").addEventListener("submit", (e) => {
-            e.preventDefault();
             
-            if (cart.length === 0) {
-                alert("Your cart is empty. Please add mangoes from 'Our Products' section first.");
-                
-                // Switch to cart tab
-                cartTabs.forEach(t => t.classList.remove("active"));
-                cartTabs[0].classList.add("active");
-                
-                cartSections.forEach(section => {
-                    section.classList.remove("active");
-                    if (section.id === "cartSection") {
-                        section.classList.add("active");
-                    }
+            // Back to top
+            document.getElementById('backToTop').addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
                 });
-                return;
+            });
+            
+            // Check if Google Apps Script URL is configured
+            if (GOOGLE_APPS_SCRIPT_URL.includes('AKfycbzM_WAQH3N4lgb9kE1ywq72n2uO0oOL99Ch6a4u7CNpWVdAwSp_iZiRGHWxrpFlZAWp')) {
+                console.warn('Please configure GOOGLE_APPS_SCRIPT_URL with your actual deployment URL');
             }
-            
-            const name = document.getElementById("cartName").value.trim();
-            const phone = document.getElementById("cartPhone").value.trim();
-            const village = document.getElementById("cartVillage").value.trim();
-            const street = document.getElementById("cartStreet").value.trim();
-            const landmark = document.getElementById("cartLandmark").value.trim();
-            const district = document.getElementById("cartDistrict").value.trim();
-            const state = document.getElementById("cartState").value.trim();
-            const pincode = document.getElementById("cartPincode").value.trim();
-            const instructions = document.getElementById("cartInstructions").value.trim();
-            
-            // Validate required fields
-            if (!name || !phone || !village || !street || !district || !state || !pincode) {
-                alert("Please fill in all required fields marked with *");
-                return;
-            }
-            
-            // Validate phone number
-            if (!/^[0-9]{10}$/.test(phone)) {
-                alert("Please enter a valid 10-digit phone number.");
-                return;
-            }
-            
-            // Validate pincode
-            if (!/^[0-9]{6}$/.test(pincode)) {
-                alert("Please enter a valid 6-digit pincode.");
-                return;
-            }
-            
-            sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions);
         });
-    });
+    </script>
     
-    // Send order via WhatsApp
-    function sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions) {
-        let message = `*New Mango Order*\n\n`;
-        message += `*Customer Details:*\n`;
-        message += `Name: ${name}\n`;
-        message += `Phone: ${phone}\n`;
-        message += `\n*Delivery Address:*\n`;
-        message += `Village/Town: ${village}\n`;
-        message += `Street/Road: ${street}\n`;
-        if (landmark) message += `Landmark: ${landmark}\n`;
-        message += `District: ${district}\n`;
-        message += `State: ${state}\n`;
-        message += `Pincode: ${pincode}\n`;
-        if (instructions) message += `Instructions: ${instructions}\n`;
-        
-        message += `\n*Order Details:*\n`;
-        
-        let total = 0;
-        cart.forEach(item => {
-            const itemTotal = item.price * item.quantity;
-            total += itemTotal;
-            message += `- ${item.name}: ${item.quantity}kg × ₹${item.price} = ₹${itemTotal}\n`;
-        });
-        
-        message += `\n*Total: ₹${total}*\n\n`;
-        message += `*Order placed via Kannamma Mango Farms website*`;
-        
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappURL = `https://wa.me/91${ownerWhatsappNumber}?text=${encodedMessage}`;
-        
-        window.open(whatsappURL, "_blank");
-        
-        // Clear cart after order
-        cart = [];
-        updateUI();
-        
-        // Reset form
-        document.getElementById("cartOrderForm").reset();
-        
-        // Close cart modal
-        document.getElementById("cartModal").classList.remove("active");
-    }
-    
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
-    
-    mobileMenuBtn.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
-            '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
-    });
-    
-    // Close mobile menu when clicking a link
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-        });
-    });
-    
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-        const navbar = document.getElementById('navbar');
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-        
-        // Show/hide back to top button
-        const backToTopBtn = document.getElementById('backToTop');
-        if (window.scrollY > 300) {
-            backToTopBtn.style.display = 'flex';
-        } else {
-            backToTopBtn.style.display = 'none';
-        }
-    });
-    
-    // Back to top button
-    document.getElementById('backToTop').addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-</script>
-    <!-- Bootstrap JS for responsive features -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
