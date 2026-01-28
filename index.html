@@ -7,6 +7,8 @@
     <title>Kannamma Mango Farms - Fresh Mangoes from Farm to Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS for responsive grid -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         :root {
             --primary: #FFA500;
@@ -14,6 +16,7 @@
             --light: #FFF9E6;
             --dark: #2E7D32;
             --text: #333333;
+            --cart-bg: #f8f9fa;
         }
         
         * {
@@ -39,6 +42,33 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-top:hover {
+            background: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
         }
         
         /* Header & Banner */
@@ -72,7 +102,7 @@
         h4 {
             font-size: 1.5rem;
             margin-bottom: 20px;
-            color:#e5e5e5(177, 216, 240);
+            color:#e5e5e5;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
         
@@ -100,6 +130,21 @@
             background: var(--dark);
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--dark);
+        }
+        
+        .btn-cart {
+            background: var(--dark);
+            padding: 10px 20px;
+            font-size: 1rem;
+            width: 100%;
         }
         
         .scroll-down {
@@ -156,6 +201,7 @@
         .nav-links {
             display: flex;
             list-style: none;
+            align-items: center;
         }
         
         .nav-links li {
@@ -190,6 +236,29 @@
             width: 100%;
         }
         
+        .cart-icon {
+            position: relative;
+            font-size: 1.3rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         .mobile-menu-btn {
             display: none;
             background: none;
@@ -197,6 +266,234 @@
             color: var(--dark);
             font-size: 1.5rem;
             cursor: pointer;
+        }
+        
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: flex-end;
+        }
+        
+        .cart-modal.active {
+            display: flex;
+        }
+        
+        .cart-content {
+            width: 500px;
+            max-width: 90%;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .cart-modal.active .cart-content {
+            transform: translateX(0);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--light);
+            background: var(--light);
+        }
+        
+        .cart-header h2 {
+            margin: 0;
+            color: var(--dark);
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+        
+        .cart-tabs {
+            display: flex;
+            background: var(--light);
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .cart-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .cart-tab.active {
+            background: white;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .cart-section {
+            padding: 20px;
+            display: none;
+        }
+        
+        .cart-section.active {
+            display: block;
+        }
+        
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item-info h4 {
+            margin: 0 0 5px 0;
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+        
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            background: var(--light);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .quantity-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .cart-item-quantity span {
+            font-weight: 600;
+            min-width: 30px;
+            text-align: center;
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ff4444;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .cart-total {
+            margin: 20px 0;
+            padding: 20px 0;
+            border-top: 2px solid var(--light);
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .cart-total .amount {
+            color: var(--primary);
+        }
+        
+        .cart-empty {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+        
+        .whatsapp-order-btn {
+            background: #25D366;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .whatsapp-order-btn:hover {
+            background: #128C7E;
+        }
+        
+        /* Order Form in Cart */
+        .order-form-small {
+            padding: 10px 0;
+        }
+        
+        .order-form-small .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .order-form-small label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.9rem;
+        }
+        
+        .order-form-small input,
+        .order-form-small textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .order-form-small input:focus,
+        .order-form-small textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .form-row-small {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row-small .form-group {
+            flex: 1;
         }
         
         /* Sections */
@@ -277,6 +574,7 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
         }
         
         .product-card:hover {
@@ -322,6 +620,29 @@
             margin-bottom: 15px;
         }
         
+        /* Cart Added Message - SIMPLIFIED VERSION */
+        .cart-added-message {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            background: var(--secondary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .cart-added-message.show {
+            opacity: 1;
+        }
+        
         /* Order Section */
         .order {
             background-color: var(--light);
@@ -365,6 +686,15 @@
             outline: none;
         }
         
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
         .submit-btn {
             width: 100%;
             padding: 15px;
@@ -376,6 +706,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.3s ease;
+            margin-top: 20px;
         }
         
         .submit-btn:hover {
@@ -415,28 +746,51 @@
             margin-bottom: 15px;
         }
         
+        /* Map Section */
+        .contact-section {
+            padding: 0;
+            margin: 0;
+        }
+        
+        .location-map {
+            width: 100%;
+            height: 450px;
+            overflow: hidden;
+        }
+        
+        .location-map iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
         /* Footer */
         footer {
             background: var(--dark);
             color: white;
             text-align: center;
-            padding: 30px 0;
+            padding: 20px 0;
+            position: relative;
         }
         
         .footer-content {
             display: flex;
             flex-direction: column;
             align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
         .social-links {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .social-links a {
             color: white;
-            font-size: 1.5rem;
-            margin: 0 10px;
+            font-size: 1.2rem;
+            margin: 0 8px;
             transition: color 0.3s ease;
         }
         
@@ -445,8 +799,20 @@
         }
         
         .copyright {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .hit-counter {
+            margin-top: 10px;
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        
+        .hit-counter img {
+            max-width: 100px;
+            height: auto;
         }
         
         /* Responsive Styles */
@@ -462,6 +828,23 @@
             .about-text, .about-image {
                 flex: none;
                 width: 100%;
+            }
+            
+            .form-row, .form-row-small {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .cart-content {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .back-to-top {
+                bottom: 70px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
             }
         }
         
@@ -494,6 +877,10 @@
             h1 {
                 font-size: 2.5rem;
             }
+            
+            .order-form {
+                padding: 30px 20px;
+            }
         }
         
         @media (max-width: 576px) {
@@ -512,10 +899,44 @@
             .order-form {
                 padding: 30px 20px;
             }
+            
+            .cart-tabs {
+                flex-direction: column;
+            }
+            
+            .cart-tab {
+                padding: 10px;
+            }
+            
+            .back-to-top {
+                bottom: 60px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.3rem;
+            }
+            
+            .hit-counter img {
+                max-width: 80px;
+            }
+            
+            footer {
+                padding: 15px 0;
+            }
+            
+            .social-links a {
+                font-size: 1.1rem;
+                margin: 0 6px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
     <!-- Navigation -->
     <nav id="navbar">
         <div class="nav-container">
@@ -526,18 +947,138 @@
             <ul class="nav-links">
                 <li><a href="#about">About Us</a></li>
                 <li><a href="#products">Our Products</a></li>
-                <li><a href="#order">Order Now</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li>
+                    <div class="cart-icon" id="cartIcon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
+    
+    <!-- Cart Modal with Order Form -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Your Cart & Order</h2>
+                <button class="close-cart" id="closeCart">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="cart-tabs">
+                <button class="cart-tab active" data-tab="cart">Cart Items</button>
+                <button class="cart-tab" data-tab="order">Order Details</button>
+            </div>
+            
+            <!-- Cart Items Section -->
+            <div class="cart-section active" id="cartSection">
+                <div class="cart-items" id="cartItems">
+                    <!-- Cart items will be dynamically added here -->
+                    <div class="cart-empty" id="cartEmpty">
+                        <i class="fas fa-shopping-cart" style="font-size: 3rem; margin-bottom: 15px; color: #ccc;"></i>
+                        <p>Your cart is empty</p>
+                        <p>Add some delicious mangoes!</p>
+                    </div>
+                </div>
+                
+                <div class="cart-total" id="cartTotal" style="display: none;">
+                    <span>Total:</span>
+                    <span class="amount">₹<span id="totalAmount">0</span></span>
+                </div>
+                
+                <div style="padding: 20px; text-align: center;">
+                    <p style="color: #666; margin-bottom: 15px;">
+                        <i class="fas fa-info-circle"></i> After adding items, go to "Order Details" tab to complete your order
+                    </p>
+                    <button class="btn" id="goToOrderTab" style="display: none;">
+                        <i class="fas fa-shopping-bag"></i> Proceed to Order
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Order Details Section -->
+            <div class="cart-section" id="orderSection">
+                <div style="padding: 20px;">
+                    <h3 style="margin-bottom: 20px; color: var(--dark);">Order Details</h3>
+                    <p style="color: #e53935; font-weight: 600; margin-bottom: 20px;">
+                        Please fill all details correctly for delivery
+                    </p>
+                    
+                    <form id="cartOrderForm" class="order-form-small">
+                        <div class="form-group">
+                            <label for="cartName">Full Name *</label>
+                            <input type="text" id="cartName" name="cartName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartPhone">Phone Number *</label>
+                            <input type="tel" id="cartPhone" name="cartPhone" pattern="[0-9]{10}" title="10-digit phone number" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartVillage">Village/Town *</label>
+                            <input type="text" id="cartVillage" name="cartVillage" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartStreet">Street/Road *</label>
+                            <input type="text" id="cartStreet" name="cartStreet" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartLandmark">Landmark (Optional)</label>
+                            <input type="text" id="cartLandmark" name="cartLandmark">
+                        </div>
+                        
+                        <div class="form-row-small">
+                            <div class="form-group">
+                                <label for="cartDistrict">District *</label>
+                                <input type="text" id="cartDistrict" name="cartDistrict" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cartState">State *</label>
+                                <input type="text" id="cartState" name="cartState" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartPincode">Pincode *</label>
+                            <input type="text" id="cartPincode" name="cartPincode" pattern="[0-9]{6}" title="6-digit pincode" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cartInstructions">Delivery Instructions (Optional)</label>
+                            <textarea id="cartInstructions" name="cartInstructions" rows="3" placeholder="Any special instructions for delivery..."></textarea>
+                        </div>
+                        
+                        <div class="cart-total" id="cartOrderTotal" style="display: none;">
+                            <span>Order Total:</span>
+                            <span class="amount">₹<span id="cartOrderAmount">0</span></span>
+                        </div>
+                        
+                        <button type="submit" class="whatsapp-order-btn" id="cartWhatsappOrderBtn" style="display: none;">
+                            <i class="fab fa-whatsapp"></i> Place Order via WhatsApp
+                        </button>
+                        
+                        <p style="margin-top: 15px; font-size: 0.8rem; color: #666; text-align: center;">
+                            Note: You need to add items to cart first from "Our Products" section
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Banner -->
     <header>
         <div class="banner-content">
             <h1>Fresh Mangoes</h1>
             <h4>From Farm to Home</h4>
-            <a href="#order" class="btn">Order Now</a>
+            <a href="#products" class="btn">Shop Now</a>
         </div>
         <a href="#about" class="scroll-down">
             <i class="fas fa-chevron-down"></i>
@@ -567,6 +1108,7 @@
             <h2 class="section-title">Our Mango Varieties</h2>
             <div class="products-grid">
                 <div class="product-card">
+                    <div class="cart-added-message" id="message-1">✓ Added to cart!</div>
                     <div class="product-image">
                         <img src="bang.jpg" alt="Banganapalle Mango">
                     </div>
@@ -574,11 +1116,14 @@
                         <h3>Banganapalle</h3>
                         <p>The king of mangoes with rich, creamy texture and sweet, saffron-flavored pulp.</p>
                         <div class="price">₹200 per KG</div>
-                        <a href="#order" class="btn">Order Now</a>
+                        <button class="btn btn-cart add-to-cart" data-id="1" data-name="Banganapalle" data-price="200">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
                 
                 <div class="product-card">
+                    <div class="cart-added-message" id="message-2">✓ Added to cart!</div>
                     <div class="product-image">
                         <img src="kadhar.jpg" alt="Kadhar Mango">
                     </div>
@@ -586,11 +1131,14 @@
                         <h3>Kadhar</h3>
                         <p>Gujarat's pride with distinct aroma, vibrant color and sweet-sour balance.</p>
                         <div class="price">₹200 per KG</div>
-                        <a href="#order" class="btn">Order Now</a>
+                        <button class="btn btn-cart add-to-cart" data-id="2" data-name="Kadhar" data-price="200">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
                 
                 <div class="product-card">
+                    <div class="cart-added-message" id="message-3">✓ Added to cart!</div>
                     <div class="product-image">
                         <img src="pull.jpg" alt="Pullura Mango">
                     </div>
@@ -598,11 +1146,14 @@
                         <h3>Pullura</h3>
                         <p>Unique beak shape with firm flesh, perfect for salads and chutneys.</p>
                         <div class="price">₹200 per KG</div>
-                        <a href="#order" class="btn">Order Now</a>
+                        <button class="btn btn-cart add-to-cart" data-id="3" data-name="Pullura" data-price="200">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
                 
                 <div class="product-card">
+                    <div class="cart-added-message" id="message-4">✓ Added to cart!</div>
                     <div class="product-image">
                         <img src="neelam.jpg" alt="Neelam Mango">
                     </div>
@@ -610,11 +1161,14 @@
                         <h3>Neelam</h3>
                         <p>Andhra's specialty with fiberless, sweet pulp and thin skin.</p>
                         <div class="price">₹200 per KG</div>
-                        <a href="#order" class="btn">Order Now</a>
+                        <button class="btn btn-cart add-to-cart" data-id="4" data-name="Neelam" data-price="200">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
                 
                 <div class="product-card">
+                    <div class="cart-added-message" id="message-5">✓ Added to cart!</div>
                     <div class="product-image">
                         <img src="mallika.jpg" alt="Mallika Mango">
                     </div>
@@ -622,11 +1176,14 @@
                         <h3>Mallika</h3>
                         <p>Famous for its aromatic flavor and juicy, sweet pulp with minimal fiber.</p>
                         <div class="price">₹200 per KG</div>
-                        <a href="#order" class="btn">Order Now</a>
+                        <button class="btn btn-cart add-to-cart" data-id="5" data-name="Mallika" data-price="200">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
                 
                 <div class="product-card">
+                    <div class="cart-added-message" id="message-6">✓ Added to cart!</div>
                     <div class="product-image">
                         <img src="totapuri.jpg" alt="Totapuri Mango">
                     </div>                    
@@ -634,53 +1191,11 @@
                         <h3>Totapuri</h3>
                         <p>Late-season variety with excellent shelf life and balanced sweetness.</p>
                         <div class="price">₹150 per KG</div>
-                        <a href="#order" class="btn">Order Now</a>
+                        <button class="btn btn-cart add-to-cart" data-id="6" data-name="Totapuri" data-price="150">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Order Section -->
-    <section id="order" class="order">
-        <div class="container">
-            
-            <h2 class="section-title">Order Fresh Mangoes</h2>
-            <p style="color: #e53935; font-weight: 600; margin-bottom: 20px; text-align: center;">
-                Please give correct contact details and address to contact
-            </p>
-            <div class="order-form">
-                <form id="orderForm">
-                    <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Delivery Address</label>
-                        <textarea id="address" name="address" rows="3" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="type">Mango Variety</label>
-                        <select id="type" name="type" required>
-                            <option value="">Select a variety</option>
-                            <option value="Banganapalli">Banganapalli - ₹200/KG</option>
-                            <option value="Kadhar">Kadhar - ₹200/KG</option>
-                            <option value="Pullura">Pullura - ₹200/KG</option>
-                            <option value="Neelam">Neelam - ₹200/KG</option>
-                            <option value="Mallika">Mallika - ₹200/KG</option>
-                            <option value="Totapuri">Totapuri - ₹150/KG</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="quantity">Quantity (in Kgs)</label>
-                        <input type="number" id="quantity" name="quantity" min="1" value="1" required>
-                    </div>
-                    <button type="submit" class="submit-btn">Place Order</button>
-                </form>
             </div>
         </div>
     </section>
@@ -712,7 +1227,20 @@
                     </div>
                     <h3>Location</h3>
                     <p>Siddaiahgari Indulu, Mogarala post</p>
-                    <p>Pakala mandal, Damalacheruvu, Tirupati District, Andhra Pradesh - 517152</p>
+                    <p>Pakala mandal, Damalacheruvu, Tirupati District, Andhra Pradesh - 517152</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Google Maps Section -->
+    <section class="contact-section">
+        <div class="container-fluid">
+            <div class="row gy-4">
+                <div class="col-12 p-0">
+                    <div class="location-map">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d508.0334317098901!2d79.08141279410684!3d13.502279575526321!3m2!1i1024!2i768!4f13.1!5e1!3m2!1sen!2sin!4v1769064349056!5m2!1sen!2sin" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -720,20 +1248,378 @@
     
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/kannamma_mango_farms/"><i class="fab fa-instagram"></i></a>
-                    <!-- <a href="#"><i class="fab fa-twitter"></i></a> -->
-                    <a href="https://whatsapp.com/channel/0029VbAnR62KAwEoPsoaUD3j"><i class="fab fa-whatsapp"></i></a>
-                </div>
-                <p class="copyright">© 2025 Kannamma Mango Farms. All Rights Reserved.</p>
+        <div class="footer-content">
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/kannamma_mango_farms/"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <p class="copyright">© 2025 Kannamma Mango Farms. All Rights Reserved.</p>
+            <div class="hit-counter">
+                <a href="https://www.freecounterstat.com" title="web counter">
+                    <img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=puk5cuwhetc5xbf855mfxjgryqpmhc39" border="0" title="Hit counter" alt="html code for hit counter">
+                </a>
             </div>
         </div>
     </footer>
-    
-    <script>
+    <!-- <script>
+        // SIMPLIFIED CART SYSTEM WITH INSTANT UPDATES
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const ownerWhatsappNumber = "9989634265";
+        
+        // Initialize cart on page load
+        document.addEventListener('DOMContentLoaded', initCart);
+        
+        function initCart() {
+            updateCartCount();
+            setupEventListeners();
+            
+            // Initialize cart display if modal is already open (for page refresh)
+            if (document.getElementById('cartModal').classList.contains('active')) {
+                updateCartDisplay();
+                updateOrderSection();
+            }
+        }
+        
+        // Update cart count in header
+        function updateCartCount() {
+            const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById("cartCount").textContent = cartCount;
+        }
+        
+        // Update cart display in modal
+        function updateCartDisplay() {
+            const cartItems = document.getElementById("cartItems");
+            const cartTotal = document.getElementById("cartTotal");
+            const cartEmpty = document.getElementById("cartEmpty");
+            const totalAmount = document.getElementById("totalAmount");
+            const goToOrderBtn = document.getElementById("goToOrderTab");
+            
+            if (cart.length === 0) {
+                cartEmpty.style.display = "block";
+                cartTotal.style.display = "none";
+                goToOrderBtn.style.display = "none";
+                
+                // Clear cart items
+                const existingItems = cartItems.querySelectorAll('.cart-item');
+                existingItems.forEach(item => item.remove());
+                
+                // Make sure empty message is visible
+                cartItems.innerHTML = '';
+                cartItems.appendChild(cartEmpty);
+                return;
+            }
+            
+            cartEmpty.style.display = "none";
+            cartTotal.style.display = "flex";
+            goToOrderBtn.style.display = "inline-block";
+            
+            let html = "";
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <div class="cart-item-price">₹${item.price}/kg</div>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" data-index="${index}" data-change="-1">-</button>
+                            <span class="quantity-display">${item.quantity}</span>
+                            <button class="quantity-btn" data-index="${index}" data-change="1">+</button>
+                        </div>
+                        <div class="cart-item-total">
+                            ₹${itemTotal}
+                        </div>
+                        <button class="remove-item" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            cartItems.innerHTML = html;
+            totalAmount.textContent = total;
+            
+            // Re-bind event listeners for cart items
+            bindCartItemListeners();
+        }
+        
+        // Update order section
+        function updateOrderSection() {
+            const cartOrderTotal = document.getElementById("cartOrderTotal");
+            const cartWhatsappOrderBtn = document.getElementById("cartWhatsappOrderBtn");
+            const cartOrderAmount = document.getElementById("cartOrderAmount");
+            
+            if (cart.length > 0) {
+                let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                cartOrderAmount.textContent = total;
+                cartOrderTotal.style.display = "flex";
+                cartWhatsappOrderBtn.style.display = "block";
+            } else {
+                cartOrderTotal.style.display = "none";
+                cartWhatsappOrderBtn.style.display = "none";
+            }
+        }
+        
+        // Update all UI elements
+        function updateUI() {
+            updateCartCount();
+            updateCartDisplay();
+            updateOrderSection();
+            saveCartToStorage();
+        }
+        
+        // Save cart to localStorage
+        function saveCartToStorage() {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+        
+        // Adjust quantity function
+        function adjustQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateUI();
+        }
+        
+        // Remove item function
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateUI();
+        }
+        
+        // Show success message on add to cart
+        function showMessage(button) {
+            const productCard = button.closest(".product-card");
+            const message = productCard.querySelector(".cart-added-message");
+            message.classList.add("show");
+            
+            setTimeout(() => {
+                message.classList.remove("show");
+            }, 1500);
+            
+            // Update button temporarily
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Added!';
+            button.style.background = 'var(--secondary)';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 1500);
+        }
+        
+        // Bind event listeners for cart items (quantity buttons and remove buttons)
+        function bindCartItemListeners() {
+            // Quantity buttons
+            document.querySelectorAll(".quantity-btn").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.dataset.index);
+                    const change = parseInt(this.dataset.change);
+                    adjustQuantity(index, change);
+                });
+            });
+            
+            // Remove buttons
+            document.querySelectorAll(".remove-item").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.dataset.index);
+                    removeItem(index);
+                });
+            });
+        }
+        
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Add to cart button listeners
+            document.querySelectorAll(".add-to-cart").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const id = parseInt(this.dataset.id);
+                    const name = this.dataset.name;
+                    const price = parseInt(this.dataset.price);
+                    
+                    const existingItem = cart.find(item => item.id === id);
+                    
+                    if (existingItem) {
+                        existingItem.quantity++;
+                    } else {
+                        cart.push({
+                            id: id,
+                            name: name,
+                            price: price,
+                            quantity: 1
+                        });
+                    }
+                    
+                    // Show success message
+                    showMessage(this);
+                    updateUI();
+                });
+            });
+            
+            // Cart modal setup
+            const cartIcon = document.getElementById("cartIcon");
+            const cartModal = document.getElementById("cartModal");
+            const closeCart = document.getElementById("closeCart");
+            
+            cartIcon.addEventListener("click", () => {
+                cartModal.classList.add("active");
+                // Update cart display when modal opens
+                updateCartDisplay();
+                updateOrderSection();
+            });
+            
+            closeCart.addEventListener("click", () => {
+                cartModal.classList.remove("active");
+            });
+            
+            cartModal.addEventListener("click", (e) => {
+                if (e.target === cartModal) {
+                    cartModal.classList.remove("active");
+                }
+            });
+            
+            // Cart tabs
+            const cartTabs = document.querySelectorAll(".cart-tab");
+            const cartSections = document.querySelectorAll(".cart-section");
+            
+            cartTabs.forEach(tab => {
+                tab.addEventListener("click", () => {
+                    const tabName = tab.dataset.tab;
+                    
+                    cartTabs.forEach(t => t.classList.remove("active"));
+                    tab.classList.add("active");
+                    
+                    cartSections.forEach(section => {
+                        section.classList.remove("active");
+                        if (section.id === tabName + "Section") {
+                            section.classList.add("active");
+                        }
+                    });
+                });
+            });
+            
+            // Proceed to order button
+            document.getElementById("goToOrderTab").addEventListener("click", () => {
+                cartTabs.forEach(t => t.classList.remove("active"));
+                cartTabs[1].classList.add("active");
+                
+                cartSections.forEach(section => {
+                    section.classList.remove("active");
+                    if (section.id === "orderSection") {
+                        section.classList.add("active");
+                    }
+                });
+            });
+            
+            // Order form submission
+            document.getElementById("cartOrderForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                
+                if (cart.length === 0) {
+                    alert("Your cart is empty. Please add mangoes from 'Our Products' section first.");
+                    
+                    // Switch to cart tab
+                    cartTabs.forEach(t => t.classList.remove("active"));
+                    cartTabs[0].classList.add("active");
+                    
+                    cartSections.forEach(section => {
+                        section.classList.remove("active");
+                        if (section.id === "cartSection") {
+                            section.classList.add("active");
+                        }
+                    });
+                    return;
+                }
+                
+                const name = document.getElementById("cartName").value.trim();
+                const phone = document.getElementById("cartPhone").value.trim();
+                const village = document.getElementById("cartVillage").value.trim();
+                const street = document.getElementById("cartStreet").value.trim();
+                const landmark = document.getElementById("cartLandmark").value.trim();
+                const district = document.getElementById("cartDistrict").value.trim();
+                const state = document.getElementById("cartState").value.trim();
+                const pincode = document.getElementById("cartPincode").value.trim();
+                const instructions = document.getElementById("cartInstructions").value.trim();
+                
+                // Validate required fields
+                if (!name || !phone || !village || !street || !district || !state || !pincode) {
+                    alert("Please fill in all required fields marked with *");
+                    return;
+                }
+                
+                // Validate phone number
+                if (!/^[0-9]{10}$/.test(phone)) {
+                    alert("Please enter a valid 10-digit phone number.");
+                    return;
+                }
+                
+                // Validate pincode
+                if (!/^[0-9]{6}$/.test(pincode)) {
+                    alert("Please enter a valid 6-digit pincode.");
+                    return;
+                }
+                
+                sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions);
+            });
+        }
+        
+        // Send order via WhatsApp
+        function sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions) {
+            let message = `*New Mango Order*\n\n`;
+            message += `*Customer Details:*\n`;
+            message += `Name: ${name}\n`;
+            message += `Phone: ${phone}\n`;
+            message += `\n*Delivery Address:*\n`;
+            message += `Village/Town: ${village}\n`;
+            message += `Street/Road: ${street}\n`;
+            if (landmark) message += `Landmark: ${landmark}\n`;
+            message += `District: ${district}\n`;
+            message += `State: ${state}\n`;
+            message += `Pincode: ${pincode}\n`;
+            if (instructions) message += `Instructions: ${instructions}\n`;
+            
+            message += `\n*Order Details:*\n`;
+            
+            let total = 0;
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                message += `- ${item.name}: ${item.quantity}kg × ₹${item.price} = ₹${itemTotal}\n`;
+            });
+            
+            message += `\n*Total: ₹${total}*\n\n`;
+            message += `*Order placed via Kannamma Mango Farms website*`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/91${ownerWhatsappNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappURL, "_blank");
+            
+            // Clear cart after order
+            cart = [];
+            updateUI();
+            
+            // Reset form
+            document.getElementById("cartOrderForm").reset();
+            
+            // Close cart modal
+            document.getElementById("cartModal").classList.remove("active");
+            
+            // Show success message
+            setTimeout(() => {
+                alert("Order placed successfully! You have been redirected to WhatsApp.");
+            }, 500);
+        }
+        
         // Mobile Menu Toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
         const navLinks = document.querySelector('.nav-links');
@@ -760,37 +1646,400 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+            
+            // Show/hide back to top button
+            const backToTopBtn = document.getElementById('backToTop');
+            if (window.scrollY > 300) {
+                backToTopBtn.style.display = 'flex';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
         });
         
-        // Form submission to Google Sheets
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxhiPB56MFdkWJbv6Jc9DuNVj8Yej7fT8Yga47Q73CZf3x8v4OYTO5aReo5fZPciXcn/exec'; // Replace with your Google Script URL
-        const form = document.forms['orderForm'];
+        // Back to top button
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script> -->
+   
+    
+
+
+    <script>
+    // SIMPLIFIED CART SYSTEM WITH INSTANT UPDATES
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const ownerWhatsappNumber = "9989634265";
+    
+    // Update cart count in header
+    function updateCartCount() {
+        const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById("cartCount").textContent = cartCount;
+    }
+    
+    // Update cart display in modal
+    function updateCartDisplay() {
+        const cartItems = document.getElementById("cartItems");
+        const cartTotal = document.getElementById("cartTotal");
+        const cartEmpty = document.getElementById("cartEmpty");
+        const totalAmount = document.getElementById("totalAmount");
+        const goToOrderBtn = document.getElementById("goToOrderTab");
         
-        form.addEventListener('submit', e => {
+        // Clear existing items
+        const existingItems = cartItems.querySelectorAll('.cart-item');
+        existingItems.forEach(item => item.remove());
+        
+        if (cart.length === 0) {
+            cartEmpty.style.display = "block";
+            cartTotal.style.display = "none";
+            goToOrderBtn.style.display = "none";
+            return;
+        }
+        
+        cartEmpty.style.display = "none";
+        cartTotal.style.display = "flex";
+        goToOrderBtn.style.display = "inline-block";
+        
+        let total = 0;
+        
+        cart.forEach((item, index) => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+                <div class="cart-item-info">
+                    <h4>${item.name}</h4>
+                    <div class="cart-item-price">₹${item.price}/kg</div>
+                </div>
+                <div class="cart-item-quantity">
+                    <button class="quantity-btn" data-index="${index}" data-change="-1">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="quantity-btn" data-index="${index}" data-change="1">+</button>
+                </div>
+                <div class="cart-item-total">
+                    ₹${itemTotal}
+                </div>
+                <button class="remove-item" data-index="${index}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            
+            cartItems.appendChild(cartItem);
+        });
+        
+        totalAmount.textContent = total;
+        
+        // Add event listeners to the newly created buttons
+        setTimeout(() => {
+            document.querySelectorAll(".quantity-btn").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.dataset.index);
+                    const change = parseInt(this.dataset.change);
+                    adjustQuantity(index, change);
+                });
+            });
+            
+            document.querySelectorAll(".remove-item").forEach(btn => {
+                btn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    const index = parseInt(this.dataset.index);
+                    removeItem(index);
+                });
+            });
+        }, 10);
+    }
+    
+    // Update order section
+    function updateOrderSection() {
+        const cartOrderTotal = document.getElementById("cartOrderTotal");
+        const cartWhatsappOrderBtn = document.getElementById("cartWhatsappOrderBtn");
+        const cartOrderAmount = document.getElementById("cartOrderAmount");
+        
+        if (cart.length > 0) {
+            let total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartOrderAmount.textContent = total;
+            cartOrderTotal.style.display = "flex";
+            cartWhatsappOrderBtn.style.display = "block";
+        } else {
+            cartOrderTotal.style.display = "none";
+            cartWhatsappOrderBtn.style.display = "none";
+        }
+    }
+    
+    // Update all UI elements
+    function updateUI() {
+        updateCartCount();
+        updateCartDisplay();
+        updateOrderSection();
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    
+    // Adjust quantity function
+    function adjustQuantity(index, change) {
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        updateUI();
+    }
+    
+    // Remove item function
+    function removeItem(index) {
+        cart.splice(index, 1);
+        updateUI();
+    }
+    
+    // Show success message on add to cart
+    function showMessage(button) {
+        const productCard = button.closest(".product-card");
+        const message = productCard.querySelector(".cart-added-message");
+        message.classList.add("show");
+        
+        setTimeout(() => {
+            message.classList.remove("show");
+        }, 1500);
+        
+        // Update button temporarily
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Added!';
+        button.style.background = 'var(--secondary)';
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '';
+        }, 1500);
+    }
+    
+    // Initialize on page load
+    document.addEventListener("DOMContentLoaded", function() {
+        updateUI();
+        
+        // Add to cart button listeners
+        document.querySelectorAll(".add-to-cart").forEach(btn => {
+            btn.addEventListener("click", function() {
+                const id = parseInt(this.dataset.id);
+                const name = this.dataset.name;
+                const price = parseInt(this.dataset.price);
+                
+                const existingItem = cart.find(item => item.id === id);
+                
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({
+                        id: id,
+                        name: name,
+                        price: price,
+                        quantity: 1
+                    });
+                }
+                
+                // Show success message
+                showMessage(this);
+                updateUI();
+            });
+        });
+        
+        // Cart modal setup
+        const cartIcon = document.getElementById("cartIcon");
+        const cartModal = document.getElementById("cartModal");
+        const closeCart = document.getElementById("closeCart");
+        
+        cartIcon.addEventListener("click", () => {
+            cartModal.classList.add("active");
+            // Update cart display when modal opens
+            updateCartDisplay();
+            updateOrderSection();
+        });
+        
+        closeCart.addEventListener("click", () => {
+            cartModal.classList.remove("active");
+        });
+        
+        cartModal.addEventListener("click", (e) => {
+            if (e.target === cartModal) {
+                cartModal.classList.remove("active");
+            }
+        });
+        
+        // Cart tabs
+        const cartTabs = document.querySelectorAll(".cart-tab");
+        const cartSections = document.querySelectorAll(".cart-section");
+        
+        cartTabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                const tabName = tab.dataset.tab;
+                
+                cartTabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                
+                cartSections.forEach(section => {
+                    section.classList.remove("active");
+                    if (section.id === tabName + "Section") {
+                        section.classList.add("active");
+                    }
+                });
+            });
+        });
+        
+        // Proceed to order button
+        document.getElementById("goToOrderTab").addEventListener("click", () => {
+            cartTabs.forEach(t => t.classList.remove("active"));
+            cartTabs[1].classList.add("active");
+            
+            cartSections.forEach(section => {
+                section.classList.remove("active");
+                if (section.id === "orderSection") {
+                    section.classList.add("active");
+                }
+            });
+        });
+        
+        // Order form submission
+        document.getElementById("cartOrderForm").addEventListener("submit", (e) => {
             e.preventDefault();
             
-            // Show loading state
-            const submitBtn = form.querySelector('button[type="submit"]');
-            const originalBtnText = submitBtn.textContent;
-            submitBtn.textContent = 'Processing...';
-            submitBtn.disabled = true;
-            
-            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-                .then(response => {
-                    alert('Thank you! Your order has been received.');
-                    form.reset();
-                    submitBtn.textContent = originalBtnText;
-                    submitBtn.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Error!', error.message);
-                    alert('There was an error submitting your order. Please try again or contact us directly.');
-                    submitBtn.textContent = originalBtnText;
-                    submitBtn.disabled = false;
+            if (cart.length === 0) {
+                alert("Your cart is empty. Please add mangoes from 'Our Products' section first.");
+                
+                // Switch to cart tab
+                cartTabs.forEach(t => t.classList.remove("active"));
+                cartTabs[0].classList.add("active");
+                
+                cartSections.forEach(section => {
+                    section.classList.remove("active");
+                    if (section.id === "cartSection") {
+                        section.classList.add("active");
+                    }
                 });
+                return;
+            }
+            
+            const name = document.getElementById("cartName").value.trim();
+            const phone = document.getElementById("cartPhone").value.trim();
+            const village = document.getElementById("cartVillage").value.trim();
+            const street = document.getElementById("cartStreet").value.trim();
+            const landmark = document.getElementById("cartLandmark").value.trim();
+            const district = document.getElementById("cartDistrict").value.trim();
+            const state = document.getElementById("cartState").value.trim();
+            const pincode = document.getElementById("cartPincode").value.trim();
+            const instructions = document.getElementById("cartInstructions").value.trim();
+            
+            // Validate required fields
+            if (!name || !phone || !village || !street || !district || !state || !pincode) {
+                alert("Please fill in all required fields marked with *");
+                return;
+            }
+            
+            // Validate phone number
+            if (!/^[0-9]{10}$/.test(phone)) {
+                alert("Please enter a valid 10-digit phone number.");
+                return;
+            }
+            
+            // Validate pincode
+            if (!/^[0-9]{6}$/.test(pincode)) {
+                alert("Please enter a valid 6-digit pincode.");
+                return;
+            }
+            
+            sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions);
         });
-    </script>
+    });
+    
+    // Send order via WhatsApp
+    function sendWhatsAppOrder(name, phone, village, street, landmark, district, state, pincode, instructions) {
+        let message = `*New Mango Order*\n\n`;
+        message += `*Customer Details:*\n`;
+        message += `Name: ${name}\n`;
+        message += `Phone: ${phone}\n`;
+        message += `\n*Delivery Address:*\n`;
+        message += `Village/Town: ${village}\n`;
+        message += `Street/Road: ${street}\n`;
+        if (landmark) message += `Landmark: ${landmark}\n`;
+        message += `District: ${district}\n`;
+        message += `State: ${state}\n`;
+        message += `Pincode: ${pincode}\n`;
+        if (instructions) message += `Instructions: ${instructions}\n`;
+        
+        message += `\n*Order Details:*\n`;
+        
+        let total = 0;
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+            message += `- ${item.name}: ${item.quantity}kg × ₹${item.price} = ₹${itemTotal}\n`;
+        });
+        
+        message += `\n*Total: ₹${total}*\n\n`;
+        message += `*Order placed via Kannamma Mango Farms website*`;
+        
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappURL = `https://wa.me/91${ownerWhatsappNumber}?text=${encodedMessage}`;
+        
+        window.open(whatsappURL, "_blank");
+        
+        // Clear cart after order
+        cart = [];
+        updateUI();
+        
+        // Reset form
+        document.getElementById("cartOrderForm").reset();
+        
+        // Close cart modal
+        document.getElementById("cartModal").classList.remove("active");
+    }
+    
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const navLinks = document.querySelector('.nav-links');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        mobileMenuBtn.innerHTML = navLinks.classList.contains('active') ? 
+            '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+    });
+    
+    // Close mobile menu when clicking a link
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+        });
+    });
+    
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+        
+        // Show/hide back to top button
+        const backToTopBtn = document.getElementById('backToTop');
+        if (window.scrollY > 300) {
+            backToTopBtn.style.display = 'flex';
+        } else {
+            backToTopBtn.style.display = 'none';
+        }
+    });
+    
+    // Back to top button
+    document.getElementById('backToTop').addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+</script>
+    <!-- Bootstrap JS for responsive features -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
-
